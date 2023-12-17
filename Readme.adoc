@@ -7,7 +7,7 @@ You can use it as a starting point for your own project.
 Template repository: https://github.com/pthom/imgui_bundle_template
 
 
-==== CMake
+=== CMake
 
 By default, you do not need to add imgui_bundle as a dependency to your project, it will be downloaded and built automatically during CMake configure time.
 
@@ -20,7 +20,7 @@ The link:CMakeLists.txt[CMakeLists.txt] file
 _Note: imgui_bundle_add_app will automatically link your app to imgui_bundle, and will embed the assets folder (for desktop, mobile, and emscripten apps)_
 
 
-==== Assets
+=== Assets
 
 Anything in the assets/ folder located beside the app's CMakeLists will be bundled together with the app (for macOS, iOS, linux, emscripten).
 
@@ -70,9 +70,160 @@ assets/
 ----
 
 
-==== Main cpp file
+=== Main cpp file
 
 The link:hello_world.cpp[hello_world.cpp] file
 
 * Provides a Gui function which is executed at each frame
 * Provides a main function that set the ImmApp ("Immediate App") params, and mentions the addons we intend to use (here we are using markdown and implot).
+
+=== Build instructions
+
+==== Build for Linux and macOS
+
+===== 1. Optional: clone hello_imgui
+
+_Note: This step is optional, since the CMakeLists.txt file will by default download and build hello_imgui at configure time._
+
+In this example, we clone hello_imgui inside `external/hello_imgui`.
+
+Note: `external/` is mentioned in `.gitignore`
+
+[source, bash]
+----
+mkdir -p external && cd external
+git clone https://github.com/pthom/imgui_bundle.git
+cd ..
+----
+
+
+Add this line at the top of your CMakeLists.txt
+
+[source, cmake]
+----
+add_subdirectory(external/imgui_bundle)
+----
+
+===== 2. Create the build directory, run cmake and make
+
+[source, bash]
+----
+mkdir -p build && cd build
+cmake ..
+make -j 4
+----
+
+==== Build for Windows
+
+===== 1. Optional: clone hello_imgui
+Follow step 1 from the Linux/macOS section above.
+
+===== 2. Create the build directory, run cmake
+
+[source, bash]
+----
+mkdir build && cd build
+cmake ..
+----
+
+===== 3. Open the Visual Studio solution
+It should be located in build/imgui_bundle_example_integration.sln
+
+
+==== Build for Android
+
+===== 1. Clone hello_imgui:
+You will need to clone hello_imgui. In this example, we clone hello_imgui inside hello_imgui_template/external/hello_imgui
+
+Note: external/ is mentioned in .gitignore
+
+[source, bash]
+----
+mkdir -p external && cd external
+git clone https://github.com/pthom/imgui_bundle.git
+cd ..
+----
+
+Add this line at the top of your CMakeLists.txt
+
+[source, cmake]
+----
+add_subdirectory(external/imgui_bundle)
+----
+
+===== 2. Download SDL
+Run the following command to download SDL2:
+
+[source, bash]
+----
+./external/imgui_bundle/external/hello_imgui/hello_imgui/tools/sdl_download.sh
+----
+
+===== 3. Create the Android Studio project
+
+[source, bash]
+----
+# Set the ANDROID_HOME and ANDROID_NDK_HOME environment variables
+# For example:
+export ANDROID_HOME=/Users/YourName/Library/Android/sdk
+export ANDROID_NDK_HOME=/Users/YourName/Library/Android/sdk/ndk/26.1.10909125
+
+mkdir -p build_android && cd build_android
+../external/imgui_bundle/external/hello_imgui/hello_imgui/tools/android/cmake_arm-android.sh ../
+----
+
+===== 4. Open the project in Android Studio
+It should be located in build_android/imgui_bundle_example_integration_AndroidStudio.
+
+
+==== Build for iOS
+
+===== 1. Clone hello_imgui and download SDL: follow steps 1 and 2 from the Android section above.
+
+===== 2. Create the Xcode project
+
+[source, bash]
+----
+mkdir -p build_ios && cd build_ios
+----
+
+Run CMake with the following command, where you replace XXXXXXXXX with your Apple Developer Team ID,
+and com.your_website with your website (e.g. com.mycompany).
+
+[source, bash]
+----
+cmake .. \
+-GXcode \
+-DCMAKE_TOOLCHAIN_FILE=../external/hello_imgui/hello_imgui_cmake/ios-cmake/ios.toolchain.cmake \
+-DPLATFORM=OS64COMBINED \
+-DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM=XXXXXXXXX \
+-DHELLO_IMGUI_BUNDLE_IDENTIFIER_URL_PART=com.your_website \
+-DHELLOIMGUI_USE_SDL_OPENGL3=ON
+----
+
+Then, open the XCode project in build_ios/imgui_bundle_example_integration.xcodeproj
+
+==== Build for emscripten
+
+===== Install emscripten
+You can either install emsdk following link:https://emscripten.org/docs/getting_started/downloads.html[the instruction on the emscripten website].
+
+===== Compile with emscripten
+
+[source, bash]
+----
+# Add emscripten tools to your path
+# (assuming you installed emscripten in ~/emsdk)
+source ~/emsdk/emsdk_env.sh
+
+# cmake and build
+mkdir build_emscripten
+cd build_emscripten
+emcmake cmake ..
+make -j 4
+
+# launch a webserver
+python3 -m http.server
+----
+
+Open a browser, and navigate to [http://localhost:8000](http://localhost:8000).
