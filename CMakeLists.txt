@@ -7,7 +7,6 @@ set(CMAKE_CXX_STANDARD 17)
 # =================
 # 1/  Option 1: if you added hello_imgui in a subfolder, you can add it to your project with:
 #         add_subdirectory(external/imgui_bundle
-add_subdirectory(external/imgui_bundle)
 
 ## 2/  Option 2: simply fetch imgui_bundle during the build
 if (NOT TARGET imgui_bundle)
