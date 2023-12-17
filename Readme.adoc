@@ -81,11 +81,11 @@ The link:hello_world.cpp[hello_world.cpp] file
 
 ==== Build for Linux and macOS
 
-===== 1. Optional: clone hello_imgui
+===== 1. Optional: clone imgui_bundle
 
-_Note: This step is optional, since the CMakeLists.txt file will by default download and build hello_imgui at configure time._
+_Note: This step is optional, since the CMakeLists.txt file will by default download and build imgui_bundle at configure time._
 
-In this example, we clone hello_imgui inside `external/hello_imgui`.
+In this example, we clone imgui_bundle inside `external/imgui_bundle`.
 
 Note: `external/` is mentioned in `.gitignore`
 
@@ -93,7 +93,8 @@ Note: `external/` is mentioned in `.gitignore`
 ----
 mkdir -p external && cd external
 git clone https://github.com/pthom/imgui_bundle.git
-cd ..
+cd imgui_bundle && git submodule update --init --recursive
+cd ../..
 ----
 
 
@@ -115,7 +116,7 @@ make -j 4
 
 ==== Build for Windows
 
-===== 1. Optional: clone hello_imgui
+===== 1. Optional: clone imgui_bundle
 Follow step 1 from the Linux/macOS section above.
 
 ===== 2. Create the build directory, run cmake
@@ -132,8 +133,8 @@ It should be located in build/imgui_bundle_example_integration.sln
 
 ==== Build for Android
 
-===== 1. Clone hello_imgui:
-You will need to clone hello_imgui. In this example, we clone hello_imgui inside hello_imgui_template/external/hello_imgui
+===== 1. Clone imgui_bundle:
+You will need to clone imgui_bundle. In this example, we clone imgui_bundle inside external/imgui_bundle
 
 Note: external/ is mentioned in .gitignore
 
@@ -141,7 +142,8 @@ Note: external/ is mentioned in .gitignore
 ----
 mkdir -p external && cd external
 git clone https://github.com/pthom/imgui_bundle.git
-cd ..
+cd imgui_bundle && git submodule update --init --recursive
+cd ../..
 ----
 
 Add this line at the top of your CMakeLists.txt
@@ -178,7 +180,7 @@ It should be located in build_android/imgui_bundle_example_integration_AndroidSt
 
 ==== Build for iOS
 
-===== 1. Clone hello_imgui and download SDL: follow steps 1 and 2 from the Android section above.
+===== 1. Clone imgui_bundle and download SDL: follow steps 1 and 2 from the Android section above.
 
 ===== 2. Create the Xcode project
 
