@@ -40,7 +40,7 @@ void Gui()
 
             This is an example of markdown widget, with an included image:
 
-            ![world](images/world.jpg)
+            ![world](images/world.png)
 
             ---
             And below is a graph created with ImPlot:
