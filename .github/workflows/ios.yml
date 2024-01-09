@@ -19,8 +19,8 @@ jobs:
       with:
         submodules: true
 
-#    - name: Setup interactive tmate session
-#      uses: mxschmitt/action-tmate@v3
+    - name: Setup interactive tmate session
+      uses: mxschmitt/action-tmate@v3
 
     - name: Clone imgui_bundle
       run: |
@@ -36,8 +36,8 @@ jobs:
         cmake .. \
           -GXcode \
           -DCMAKE_TOOLCHAIN_FILE=../external/imgui_bundle/external/hello_imgui/hello_imgui/hello_imgui_cmake/ios-cmake/ios.toolchain.cmake \
-          -DPLATFORM=SIMULATOR64 \
-          -DHELLOIMGUI_USE_SDL_OPENGL3=ON
+          -DHELLOIMGUI_USE_SDL_OPENGL3=ON \
+          -DPLATFORM=SIMULATOR64
 
     - name: Build for simulator
       working-directory: build-ios
