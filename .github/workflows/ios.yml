@@ -1,4 +1,4 @@
-name: "CI Multiplatform Build"
+name: "ios"
 
 # This is an example of a CI workflow that builds the project on all desktop platforms
 
@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: "CI Multiplatform Build"
+    name: "ios"
     runs-on: macos-latest
     strategy:
       fail-fast: false
