@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 # Add imgui_bundle
 # =================
 # 1/  Option 1: if you added imgui_bundle in a subfolder, you can add it to your project with:
-if(FILE EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/external/imgui_bundle)
+if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/external/imgui_bundle)
     add_subdirectory(external/imgui_bundle)
 endif()
 
