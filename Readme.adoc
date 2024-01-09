@@ -1,4 +1,4 @@
-=== How to integrate Dear ImGui Bundle into your {cpp} application
+== How to integrate Dear ImGui Bundle into your {cpp} application
 
 This template demonstrates how to easily integrate Dear ImGui Bundle to your own project.
 
@@ -155,3 +155,71 @@ python3 -m http.server
 ----
 
 Open a browser, and navigate to [http://localhost:8000](http://localhost:8000).
+
+
+==== Build for Android
+
+===== 1. Clone imgui_bundle
+You will need to clone imgui_bundle. In this example, we clone hello_imgui inside hello_imgui_template/external/hello_imgui
+
+Note: external/ is mentioned in .gitignore
+
+[source, bash]
+----
+mkdir -p external && cd external
+git clone https://github.com/pthom/imgui_bundle.git
+cd imgui_bundle && git submodule update --init --recursive && cd ..
+cd ..
+----
+
+Add this line at the top of your CMakeLists.txt
+
+[source, cmake]
+----
+add_subdirectory(external/imgui_bundle)
+----
+
+===== 2. Create the Android Studio project
+
+[source, bash]
+----
+# Set the ANDROID_HOME and ANDROID_NDK_HOME environment variables
+# For example:
+export ANDROID_HOME=/Users/YourName/Library/Android/sdk
+export ANDROID_NDK_HOME=/Users/YourName/Library/Android/sdk/ndk/26.1.10909125
+
+mkdir build_android && cd build_android
+../external/imgui_bundle/external/hello_imgui/hello_imgui/tools/android/cmake_arm-android.sh ..
+----
+
+===== 3. Open the project in Android Studio
+It should be located in `build_android/imgui_bundle_example_integration_AndroidStudio`
+
+
+==== Build for iOS
+
+===== 1. Clone imgui_bundle: follow steps 1 from the Android section above.
+
+===== 2. Create the Xcode project
+
+[source, bash]
+----
+mkdir build_ios && cd build_ios
+----
+
+Run CMake with the following command, where you replace XXXXXXXXX with your Apple Developer Team ID,
+and com.your_website with your website (e.g. com.mycompany).
+
+[source, bash]
+----
+cmake .. \
+-GXcode \
+-DCMAKE_TOOLCHAIN_FILE=../external/imgui_bundle/external/hello_imgui/hello_imgui/hello_imgui_cmake/ios-cmake/ios.toolchain.cmake \
+-DPLATFORM=OS64COMBINED \
+-DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM=XXXXXXXXX \
+-DHELLO_IMGUI_BUNDLE_IDENTIFIER_URL_PART=com.your_website \
+-DHELLOIMGUI_USE_SDL_OPENGL3=ON
+----
+
+Then, open the XCode project in build_ios/imgui_bundle_example_integration.xcodeproj
+
