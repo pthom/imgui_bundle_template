@@ -1,6 +1,5 @@
 name: "ios"
 
-# This is an example of a CI workflow that builds the project on all desktop platforms
 
 on:
   workflow_dispatch:

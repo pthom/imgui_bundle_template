@@ -87,7 +87,6 @@ _Note: This step is optional, since the CMakeLists.txt file will by default down
 
 In this example, we clone imgui_bundle inside `external/imgui_bundle`.
 
-Note: `external/` is mentioned in `.gitignore`
 
 [source, bash]
 ----
@@ -98,12 +97,11 @@ cd ../..
 ----
 
 
-Add this line at the top of your CMakeLists.txt
+Notes:
 
-[source, cmake]
-----
-add_subdirectory(external/imgui_bundle)
-----
+* `external/` is mentioned in `.gitignore`
+* The main CMakeLists will detect the presence of `external/imgui_bundle` and will use it instead of downloading it.
+
 
 ===== 2. Create the build directory, run cmake and make
 
