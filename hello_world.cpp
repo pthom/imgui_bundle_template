@@ -1,6 +1,8 @@
 // Part of ImGui Bundle - MIT License - Copyright (c) 2022-2024 Pascal Thomet - https://github.com/pthom/imgui_bundle
 #include "immapp/immapp.h"
+#ifdef IMGUI_BUNDLE_WITH_IMPLOT
 #include "implot/implot.h"
+#endif
 #include "imgui_md_wrapper.h"
 
 #include <cmath>
@@ -22,12 +24,14 @@ void DemoImplot()
     }
 
     ImGuiMd::Render("# This is the plot of _cosinus_ and *sinus*");
+#ifdef IMGUI_BUNDLE_WITH_IMPLOT
     if (ImPlot::BeginPlot("Plot"))
     {
         ImPlot::PlotLine("y1", x.data(), y1.data(), (int)x.size());
         ImPlot::PlotLine("y2", x.data(), y2.data(), (int)x.size());
         ImPlot::EndPlot();
     }
+#endif
 }
 
 
