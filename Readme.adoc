@@ -63,7 +63,7 @@ assets/
 │    │    ├── Roboto-BoldItalic.ttf
 │    │    ├── Roboto-Regular.ttf
 │    │    └── Roboto-RegularItalic.ttf
-│    ├── SourceCodePro-Regular.ttf
+│    ├── Inconsolata-Medium.ttf
 ├── images
 │    └── markdown_broken_image.png
 
