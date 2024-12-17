@@ -22,6 +22,7 @@ if (NOT TARGET imgui_bundle)
     # set(IMMVISION_FETCH_OPENCV ON)
 endif()
 
+
 # Build your app
 # ==============
 imgui_bundle_add_app(imgui_bundle_example_integration hello_world.cpp)
