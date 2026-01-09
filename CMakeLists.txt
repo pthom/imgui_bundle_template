@@ -1,13 +1,13 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.28)
 project(imgui_bundle_example_integration)
 set(CMAKE_CXX_STANDARD 17)
-
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Add imgui_bundle
 # =================
 # 1/  Option 1: if you added imgui_bundle in a subfolder, you can add it to your project with:
 if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/external/imgui_bundle)
-    add_subdirectory(external/imgui_bundle)
+    add_subdirectory(external/imgui_bundle EXCLUDE_FROM_ALL)
 endif()
 
 ## 2/  Option 2: simply fetch imgui_bundle during the build
@@ -15,7 +15,7 @@ if (NOT TARGET imgui_bundle)
     message(STATUS "Fetching imgui_bundle...")
     include(FetchContent)
     Set(FETCHCONTENT_QUIET FALSE)
-    FetchContent_Declare(imgui_bundle GIT_REPOSITORY https://github.com/pthom/imgui_bundle.git GIT_TAG main)
+    FetchContent_Declare(imgui_bundle GIT_REPOSITORY https://github.com/pthom/imgui_bundle.git GIT_TAG main EXCLUDE_FROM_ALL)
     FetchContent_MakeAvailable(imgui_bundle)
 
     # Uncomment the next line if you which to also automatically fetch and compile OpenCV for immvision support
