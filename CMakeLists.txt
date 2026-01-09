@@ -56,20 +56,15 @@ else()
     # - install the app manually
     # - install the assets manually
     # - pass the assets location to the app, and set this assets location in main() via the compile definition ASSETS_LOCATION:
-    #     #ifdef ASSETS_LOCATION \n HelloImGui::SetAssetsFolder(ASSETS_LOCATION); \n #endif
-    if (NOT EXAMPLE_INTEGRATION_PORTABLE_INSTALL)
-        include(GNUInstallDirs)
-        install(TARGETS imgui_bundle_example_integration DESTINATION ${CMAKE_INSTALL_BINDIR})
-        set(assets_install_dir ${CMAKE_INSTALL_DATADIR}/imgui_bundle_example_integration)
-        if (NOT IS_ABSOLUTE ${assets_install_dir})
-            set(assets_install_dir ${CMAKE_INSTALL_PREFIX}/${assets_install_dir})
-        endif()
-        install(DIRECTORY assets DESTINATION ${assets_install_dir})
-        target_compile_definitions(imgui_bundle_example_integration PRIVATE ASSETS_LOCATION="${assets_install_dir}/assets")
-    endif()
+    include(GNUInstallDirs)
+    install(TARGETS imgui_bundle_example_integration DESTINATION ${CMAKE_INSTALL_BINDIR})
+    set(assets_install_dir ${CMAKE_INSTALL_DATADIR}/imgui_bundle_example_integration)
+    install(DIRECTORY assets DESTINATION ${assets_install_dir})
 
+    # Calculate relative path from bin to assets and pass to HelloImGui,
+    # which will resolve it relative to the executable location at runtime.
+    file(RELATIVE_PATH assets_relative_to_bin
+        "/${CMAKE_INSTALL_BINDIR}"
+        "/${assets_install_dir}/assets")
+    target_compile_definitions(imgui_bundle_example_integration PRIVATE ASSETS_LOCATION="${assets_relative_to_bin}")
 endif()
-
-
-
-
