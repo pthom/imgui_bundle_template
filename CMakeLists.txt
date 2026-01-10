@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.22)
 project(imgui_bundle_example_integration)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -15,7 +15,12 @@ if (NOT TARGET imgui_bundle)
     message(STATUS "Fetching imgui_bundle...")
     include(FetchContent)
     Set(FETCHCONTENT_QUIET FALSE)
-    FetchContent_Declare(imgui_bundle GIT_REPOSITORY https://github.com/pthom/imgui_bundle.git GIT_TAG main EXCLUDE_FROM_ALL)
+    FetchContent_Declare(
+        imgui_bundle
+        GIT_REPOSITORY https://github.com/pthom/imgui_bundle.git
+        GIT_TAG main
+        # EXCLUDE_FROM_ALL # uncomment for a cleaner cmake install output
+    )
     FetchContent_MakeAvailable(imgui_bundle)
 
     # Uncomment the next line if you which to also automatically fetch and compile OpenCV for immvision support
