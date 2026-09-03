@@ -1,12 +1,16 @@
 // Part of ImGui Bundle - MIT License - Copyright (c) 2022-2026 Pascal Thomet - https://github.com/pthom/imgui_bundle
 //
-// Example application using several libraries of Dear ImGui Bundle:
-// ImmApp / HelloImGui, markdown (with LaTeX), ImPlot, ImPlot3D, ImmVision, imgui-knobs, imgui_toggle, imspinner.
+// Example application using many libraries of Dear ImGui Bundle:
+// ImmApp / HelloImGui, markdown (with LaTeX), ImPlot, ImPlot3D, ImmVision, imgui-knobs, imgui_toggle, imspinner,
+// ImAnim, NanoVG, imgui-node-editor, ImGuizmo, imgui_tex_inspect, ImGui Test Engine.
 //
 // The IMGUI_BUNDLE_WITH_* macros are provided by imgui_bundle, according to how it was built:
 // they let this example compile even if some optional libraries were disabled.
 #include "immapp/immapp.h"
 #include "imgui_md_wrapper/imgui_md_wrapper.h"
+#include "imgui-knobs/imgui-knobs.h"
+#include "imgui_toggle/imgui_toggle.h"
+#include "imspinner/imspinner.h"
 #ifdef IMGUI_BUNDLE_WITH_IMPLOT
 #include "implot/implot.h"
 #endif
@@ -16,12 +20,31 @@
 #ifdef IMGUI_BUNDLE_WITH_IMMVISION
 #include "immvision/immvision.h"
 #endif
-#include "imgui-knobs/imgui-knobs.h"
-#include "imgui_toggle/imgui_toggle.h"
-#include "imspinner/imspinner.h"
+#ifdef IMGUI_BUNDLE_WITH_IMANIM
+#include "ImAnim/im_anim.h"
+#endif
+#ifdef IMGUI_BUNDLE_WITH_NANOVG
+#include "nanovg.h"
+#include "nvg_imgui/nvg_imgui.h"
+#endif
+#ifdef IMGUI_BUNDLE_WITH_IMGUI_NODE_EDITOR
+#include "imgui-node-editor/imgui_node_editor.h"
+#endif
+#ifdef IMGUI_BUNDLE_WITH_IMGUIZMO
+#include "ImGuizmo.h"
+#endif
+#ifdef IMGUI_BUNDLE_WITH_IMGUI_TEX_INSPECT
+#include "imgui_tex_inspect/imgui_tex_inspect.h"
+#endif
+#ifdef HELLOIMGUI_WITH_TEST_ENGINE
+#include "imgui_test_engine/imgui_te_engine.h"
+#include "imgui_test_engine/imgui_te_context.h"
+#include "imgui_test_engine/imgui_te_ui.h"
+#endif
 
 #include <cmath>
 #include <cstdint>
+#include <memory>
 #include <vector>
 
 
@@ -115,7 +138,133 @@ void GuiWidgets()
     ImGui::Toggle("Enabled", &enabled);
     ImGui::SameLine();
     ImSpinner::SpinnerAng("spinner", 16.f, 3.f);
+
+#ifdef IMGUI_BUNDLE_WITH_IMANIM
+    // ImAnim: animate a value towards a target (the "Enabled" toggle above)
+    ImGui::SeparatorText("ImAnim");
+    float animated = iam_tween_float(
+        ImGui::GetID("anim"), 0, enabled ? 1.f : 0.f, 0.8f,
+        iam_ease_back(1.5f), iam_policy_crossfade, ImGui::GetIO().DeltaTime);
+    ImGui::ProgressBar(animated, ImVec2(-1, 0), "toggle \"Enabled\" to animate");
+#endif
 }
+
+
+#ifdef IMGUI_BUNDLE_WITH_NANOVG
+// NanoVG: vector drawing into a framebuffer, displayed as an image.
+// The NanoVG context requires an active render backend: it is created in PostInit and released in BeforeExit.
+struct NanoVgState
+{
+    NVGcontext* vg = nullptr;
+    std::unique_ptr<NvgImgui::NvgFramebuffer> framebuffer;
+
+    void Init()
+    {
+        vg = NvgImgui::CreateNvgContext_HelloImGui(NvgImgui::NVG_ANTIALIAS | NvgImgui::NVG_STENCIL_STROKES);
+        framebuffer = std::make_unique<NvgImgui::NvgFramebuffer>(vg, 512, 256, 0);
+    }
+    void Release()
+    {
+        framebuffer.reset();
+        NvgImgui::DeleteNvgContext_HelloImGui(vg);
+        vg = nullptr;
+    }
+};
+static NanoVgState gNanoVg;
+
+void GuiNanoVg()
+{
+    auto draw = [](NVGcontext* vg, float width, float height) {
+        nvgBeginPath(vg);
+        nvgCircle(vg, width / 2.f, height / 2.f, height / 3.f);
+        nvgFillColor(vg, nvgRGBA(255, 120, 50, 255));
+        nvgFill(vg);
+        nvgStrokeWidth(vg, 6.f);
+        nvgStrokeColor(vg, nvgRGBA(255, 255, 255, 255));
+        nvgStroke(vg);
+    };
+    NvgImgui::RenderNvgToFrameBuffer(gNanoVg.vg, *gNanoVg.framebuffer, draw, ImVec4(0.1f, 0.1f, 0.3f, 1.f));
+    ImGui::Image(gNanoVg.framebuffer->TextureId, ImVec2(512, 256));
+}
+#endif
+
+
+#ifdef IMGUI_BUNDLE_WITH_IMGUI_NODE_EDITOR
+namespace ed = ax::NodeEditor;
+void GuiNodeEditor()
+{
+    // ImmApp provides a default node editor context (AddOnsParams::withNodeEditor)
+    ed::Begin("editor", ImVec2(0, 300));
+    static bool first = true;
+    if (first) ed::SetNodePosition(1, ImVec2(20, 40));
+    ed::BeginNode(1);
+    ImGui::Text("Node A");
+    ed::BeginPin(2, ed::PinKind::Output); ImGui::Text("out ->"); ed::EndPin();
+    ed::EndNode();
+
+    if (first) ed::SetNodePosition(3, ImVec2(250, 40));
+    ed::BeginNode(3);
+    ImGui::Text("Node B");
+    ed::BeginPin(4, ed::PinKind::Input); ImGui::Text("-> in"); ed::EndPin();
+    ed::EndNode();
+
+    ed::Link(5, 2, 4);
+    ed::End();
+    first = false;
+}
+#endif
+
+
+#ifdef IMGUI_BUNDLE_WITH_IMGUIZMO
+void GuiImGuizmo()
+{
+    static float view[16] = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 };
+    ImGuizmo::BeginFrame();
+    ImGuizmo::SetDrawlist();
+    ImVec2 pos = ImGui::GetCursorScreenPos();
+    ImVec2 size(256, 256);
+    ImGuizmo::SetRect(pos.x, pos.y, size.x, size.y);
+    ImGuizmo::ViewManipulate(view, 8.f, pos, size, 0x10101010);
+    ImGui::Dummy(size);
+    ImGui::Text("Drag the cube to rotate the view");
+}
+#endif
+
+
+#ifdef IMGUI_BUNDLE_WITH_IMGUI_TEX_INSPECT
+void GuiTexInspect()
+{
+    static ImTextureID textureId = HelloImGui::ImTextureIdFromAsset("images/world.png");
+    static ImVec2 textureSize = HelloImGui::ImageSizeFromAsset("images/world.png");
+    ImGuiTexInspect::BeginInspectorPanel("Inspector", textureId, textureSize, 0,
+                                         ImGuiTexInspect::SizeIncludingBorder(ImVec2(500, 350)));
+    ImGuiTexInspect::EndInspectorPanel();  // must be called even if BeginInspectorPanel returned false
+}
+#endif
+
+
+#ifdef HELLOIMGUI_WITH_TEST_ENGINE
+static ImGuiTest* gTestVisitTabs = nullptr;
+
+void RegisterTests()
+{
+    ImGuiTestEngine* engine = HelloImGui::GetImGuiTestEngine();
+    gTestVisitTabs = IM_REGISTER_TEST(engine, "Example", "Visit all tabs");
+    gTestVisitTabs->TestFunc = [](ImGuiTestContext* ctx) {
+        ctx->SetRef("//$FOCUSED");
+        for (const char* tab : { "Plots", "Widgets", "Markdown", "Test Engine" })
+            ctx->ItemClick((std::string("tabs/") + tab).c_str());
+    };
+}
+
+void GuiTestEngine()
+{
+    ImGuiTestEngine* engine = HelloImGui::GetImGuiTestEngine();
+    if (ImGui::Button("Run \"Visit all tabs\""))
+        ImGuiTestEngine_QueueTest(engine, gTestVisitTabs);
+    ImGuiTestEngine_ShowTestEngineWindows(engine, nullptr);
+}
+#endif
 
 
 void Gui()
@@ -128,6 +277,21 @@ void Gui()
         if (ImGui::BeginTabItem("ImmVision")) { GuiImmVision(); ImGui::EndTabItem(); }
 #endif
         if (ImGui::BeginTabItem("Widgets")) { GuiWidgets(); ImGui::EndTabItem(); }
+#ifdef IMGUI_BUNDLE_WITH_NANOVG
+        if (ImGui::BeginTabItem("NanoVG")) { GuiNanoVg(); ImGui::EndTabItem(); }
+#endif
+#ifdef IMGUI_BUNDLE_WITH_IMGUI_NODE_EDITOR
+        if (ImGui::BeginTabItem("Node Editor")) { GuiNodeEditor(); ImGui::EndTabItem(); }
+#endif
+#ifdef IMGUI_BUNDLE_WITH_IMGUIZMO
+        if (ImGui::BeginTabItem("ImGuizmo")) { GuiImGuizmo(); ImGui::EndTabItem(); }
+#endif
+#ifdef IMGUI_BUNDLE_WITH_IMGUI_TEX_INSPECT
+        if (ImGui::BeginTabItem("Tex Inspect")) { GuiTexInspect(); ImGui::EndTabItem(); }
+#endif
+#ifdef HELLOIMGUI_WITH_TEST_ENGINE
+        if (ImGui::BeginTabItem("Test Engine")) { GuiTestEngine(); ImGui::EndTabItem(); }
+#endif
         ImGui::EndTabBar();
     }
 }
@@ -142,10 +306,18 @@ int main(int , char *[])
     ImmVision::UseRgbColorOrder();
 #endif
 
-    HelloImGui::SimpleRunnerParams runnerParams;
-    runnerParams.guiFunction = Gui;
-    runnerParams.windowTitle = "Dear ImGui Bundle example";
-    runnerParams.windowSize = {800, 800};
+    HelloImGui::RunnerParams runnerParams;
+    runnerParams.appWindowParams.windowTitle = "Dear ImGui Bundle example";
+    runnerParams.appWindowParams.windowGeometry.size = {900, 800};
+    runnerParams.callbacks.ShowGui = Gui;
+#ifdef IMGUI_BUNDLE_WITH_NANOVG
+    runnerParams.callbacks.EnqueuePostInit([] { gNanoVg.Init(); });
+    runnerParams.callbacks.EnqueueBeforeExit([] { gNanoVg.Release(); });
+#endif
+#ifdef HELLOIMGUI_WITH_TEST_ENGINE
+    runnerParams.useImGuiTestEngine = true;
+    runnerParams.callbacks.RegisterTests = RegisterTests;
+#endif
 
     ImmApp::AddOnsParams addOnsParams;
     addOnsParams.withMarkdown = true;
@@ -157,6 +329,15 @@ int main(int , char *[])
 #endif
 #ifdef IMGUI_BUNDLE_WITH_IMPLOT3D
     addOnsParams.withImplot3d = true;
+#endif
+#ifdef IMGUI_BUNDLE_WITH_IMGUI_NODE_EDITOR
+    addOnsParams.withNodeEditor = true;
+#endif
+#ifdef IMGUI_BUNDLE_WITH_IMGUI_TEX_INSPECT
+    addOnsParams.withTexInspect = true;
+#endif
+#ifdef IMGUI_BUNDLE_WITH_IMANIM
+    addOnsParams.withImAnim = true;
 #endif
 
     ImmApp::Run(runnerParams, addOnsParams);
