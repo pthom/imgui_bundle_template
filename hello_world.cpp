@@ -251,7 +251,9 @@ void RegisterTests()
     ImGuiTestEngine* engine = HelloImGui::GetImGuiTestEngine();
     gTestVisitTabs = IM_REGISTER_TEST(engine, "Example", "Visit all tabs");
     gTestVisitTabs->TestFunc = [](ImGuiTestContext* ctx) {
-        ctx->SetRef("//$FOCUSED");
+        // Target the app's main window explicitly (HelloImGui's default full screen window):
+        // "//$FOCUSED" would point to the Test Engine window when the test is started from there.
+        ctx->SetRef("Main window (title bar invisible)");
         for (const char* tab : { "Plots", "Widgets", "Markdown", "Test Engine" })
             ctx->ItemClick((std::string("tabs/") + tab).c_str());
     };
