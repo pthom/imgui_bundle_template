@@ -13,7 +13,10 @@ By default, you do not need to add imgui_bundle as a dependency to your project,
 
 The link:CMakeLists.txt[CMakeLists.txt] file
 
-* Downloads imgui_bundle at configure time
+* Gets imgui_bundle, from the first available of:
+** an installed imgui_bundle package (`cmake --install` of imgui_bundle, or a package manager such as Conan): pass `-DCMAKE_PREFIX_PATH=/path/to/imgui_bundle_install` to cmake
+** a copy of imgui_bundle in `external/imgui_bundle`
+** a download of imgui_bundle at configure time (default)
 * Makes the `imgui_bundle_add_app` cmake function available
 * Uses `imgui_bundle_add_app` to build your app and link it with ImGuiBundle
 
@@ -110,6 +113,18 @@ Notes:
 ----
 mkdir -p build && cd build
 cmake ..
+make -j 4
+----
+
+===== Alternative: build against an installed imgui_bundle
+
+If imgui_bundle was installed (`cmake --install` from an imgui_bundle build, or via a package manager),
+point CMake to the install prefix instead of cloning or downloading imgui_bundle:
+
+[source, bash]
+----
+mkdir -p build && cd build
+cmake .. -DCMAKE_PREFIX_PATH=/path/to/imgui_bundle_install
 make -j 4
 ----
 
