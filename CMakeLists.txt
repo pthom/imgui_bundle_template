@@ -5,16 +5,27 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Add imgui_bundle
 # =================
-# 1/  Option 1: if you added imgui_bundle in a subfolder, you can add it to your project with:
-if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/external/imgui_bundle)
+# There are three ways to get imgui_bundle, tried in this order:
+#
+# 1/ Use an installed imgui_bundle package (produced by "cmake --install" of imgui_bundle,
+#    or provided by a package manager such as Conan). Tell CMake where it is:
+#        cmake .. -DCMAKE_PREFIX_PATH=/path/to/imgui_bundle_install
+#
+# 2/ Use a copy of imgui_bundle in the subfolder external/imgui_bundle:
+#        git clone --recurse-submodules https://github.com/pthom/imgui_bundle.git external/imgui_bundle
+#
+# 3/ Otherwise, imgui_bundle is downloaded and built along with this project (FetchContent).
+#    This is the default: it requires no setup, but the first build is longer.
+find_package(imgui_bundle CONFIG QUIET)
+if(imgui_bundle_FOUND)
+    message(STATUS "Using installed imgui_bundle from ${imgui_bundle_DIR}")
+elseif(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/external/imgui_bundle)
+    message(STATUS "Using imgui_bundle from external/imgui_bundle")
     add_subdirectory(external/imgui_bundle EXCLUDE_FROM_ALL)
-endif()
-
-## 2/  Option 2: simply fetch imgui_bundle during the build
-if (NOT TARGET imgui_bundle)
+else()
     message(STATUS "Fetching imgui_bundle...")
     include(FetchContent)
-    Set(FETCHCONTENT_QUIET FALSE)
+    set(FETCHCONTENT_QUIET FALSE)
     FetchContent_Declare(
         imgui_bundle
         GIT_REPOSITORY https://github.com/pthom/imgui_bundle.git
@@ -26,8 +37,6 @@ if (NOT TARGET imgui_bundle)
     # Uncomment the next line if you which to also automatically fetch and compile OpenCV for immvision support
     # set(IMMVISION_FETCH_OPENCV ON)
 endif()
-
-
 
 
 # Build your app
