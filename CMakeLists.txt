@@ -10,14 +10,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # 1/ Use an installed imgui_bundle package (produced by "cmake --install" of imgui_bundle,
 #    or provided by a package manager such as Conan). Tell CMake where it is:
 #        cmake .. -DCMAKE_PREFIX_PATH=/path/to/imgui_bundle_install
-#    (when CMAKE_PREFIX_PATH or imgui_bundle_DIR is given, the package is required: no fallback)
+#    or, to require the installed package (no fallback to 2/ and 3/ if it is not found):
+#        cmake .. -Dimgui_bundle_DIR=/path/to/imgui_bundle_install/lib/cmake/imgui_bundle
 #
 # 2/ Use a copy of imgui_bundle in the subfolder external/imgui_bundle:
 #        git clone --recurse-submodules https://github.com/pthom/imgui_bundle.git external/imgui_bundle
 #
 # 3/ Otherwise, imgui_bundle is downloaded and built along with this project (FetchContent).
 #    This is the default: it requires no setup, but the first build is longer.
-if(DEFINED CMAKE_PREFIX_PATH OR imgui_bundle_DIR)
+if(imgui_bundle_DIR)
     find_package(imgui_bundle CONFIG REQUIRED)
 else()
     find_package(imgui_bundle CONFIG QUIET)
