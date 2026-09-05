@@ -39,9 +39,6 @@ else()
         # EXCLUDE_FROM_ALL # uncomment for a cleaner cmake install output
     )
     FetchContent_MakeAvailable(imgui_bundle)
-
-    # Uncomment the next line if you which to also automatically fetch and compile OpenCV for immvision support
-    # set(IMMVISION_FETCH_OPENCV ON)
 endif()
 
 
