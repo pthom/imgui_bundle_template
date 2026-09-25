@@ -7,7 +7,7 @@
 // The IMGUI_BUNDLE_WITH_* macros are provided by imgui_bundle, according to how it was built:
 // they let this example compile even if some optional libraries were disabled.
 #include "immapp/immapp.h"
-#include "imgui_md_wrapper/imgui_md_wrapper.h"
+#include "imgui_rich_md/rich_md.h"
 #include "imgui-knobs/imgui-knobs.h"
 #include "imgui_toggle/imgui_toggle.h"
 #include "imspinner/imspinner.h"
@@ -50,7 +50,7 @@
 
 void GuiMarkdown()
 {
-    ImGuiMd::RenderUnindented(R"(
+    RichMd::Render(R"(
         # Dear ImGui Bundle
         [Dear ImGui Bundle](https://github.com/pthom/imgui_bundle) is a bundle for [Dear ImGui](https://github.com/ocornut/imgui.git),
         including various useful libraries from its ecosystem.
@@ -64,7 +64,7 @@ void GuiMarkdown()
     )");
 
 #ifdef IMGUI_RICHMD_WITH_LATEX
-    ImGuiMd::RenderUnindented(R"(
+    RichMd::Render(R"(
         ---
         ## LaTeX
         Math is rendered natively by *MicroTeX*: inline $E = mc^2$ and $\sqrt{a^2 + b^2}$, or display math:
