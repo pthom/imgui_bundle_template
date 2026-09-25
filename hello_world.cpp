@@ -304,9 +304,6 @@ int main(int , char *[])
 #ifdef ASSETS_LOCATION
     HelloImGui::SetAssetsFolder(ASSETS_LOCATION);
 #endif
-#ifdef IMGUI_BUNDLE_WITH_IMMVISION
-    ImmVision::UseRgbColorOrder();
-#endif
 
     HelloImGui::RunnerParams runnerParams;
     runnerParams.appWindowParams.windowTitle = "Dear ImGui Bundle example";
