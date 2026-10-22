@@ -35,7 +35,7 @@ else()
     FetchContent_Declare(
         imgui_bundle
         GIT_REPOSITORY https://github.com/pthom/imgui_bundle.git
-        GIT_TAG main
+        GIT_TAG v1.93.0  # a release tag; "main" follows the latest development
         # EXCLUDE_FROM_ALL # uncomment for a cleaner cmake install output
     )
     FetchContent_MakeAvailable(imgui_bundle)

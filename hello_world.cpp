@@ -6,6 +6,7 @@
 //
 // The IMGUI_BUNDLE_WITH_* macros are provided by imgui_bundle, according to how it was built:
 // they let this example compile even if some optional libraries were disabled.
+// Two cannot be disabled here: ImmApp (it also needs imgui-node-editor) and imgui_rich_md.
 #include "immapp/immapp.h"
 #include "imgui_rich_md/rich_md.h"
 #include "imgui-knobs/imgui-knobs.h"

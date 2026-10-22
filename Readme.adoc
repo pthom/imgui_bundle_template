@@ -7,6 +7,20 @@ You can use it as a starting point for your own project.
 Template repository: https://github.com/pthom/imgui_bundle_template
 
 
+=== Quick start
+
+[source, bash]
+----
+git clone https://github.com/pthom/imgui_bundle_template my_app
+cd my_app
+cmake -B build
+cmake --build build -j 8
+----
+
+The first configure downloads Dear ImGui Bundle (about a minute), and the first build takes a few minutes.
+The app is then in `build/` (on macOS: `open build/imgui_bundle_example_integration.app`).
+
+
 === CMake
 
 By default, you do not need to add imgui_bundle as a dependency to your project, it will be downloaded and built automatically during CMake configure time.
